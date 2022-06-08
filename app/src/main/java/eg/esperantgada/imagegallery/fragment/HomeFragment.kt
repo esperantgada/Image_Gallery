@@ -14,6 +14,7 @@ import androidx.recyclerview.widget.StaggeredGridLayoutManager
 import dagger.hilt.android.AndroidEntryPoint
 import eg.esperantgada.imagegallery.R
 import eg.esperantgada.imagegallery.adapter.FlickrImageAdapter
+import eg.esperantgada.imagegallery.adapter.FlickrImageLoadStateAdapter
 import eg.esperantgada.imagegallery.databinding.FragmentHomeBinding
 import eg.esperantgada.imagegallery.viewmodel.FlickrImageViewModel
 
@@ -42,7 +43,10 @@ class HomeFragment : Fragment() {
         flickrImageAdapter = FlickrImageAdapter()
 
         binding.recyclerView.apply {
-            adapter = flickrImageAdapter
+            adapter = flickrImageAdapter.withLoadStateHeaderAndFooter(
+                header = FlickrImageLoadStateAdapter{flickrImageAdapter.retry()},
+                footer = FlickrImageLoadStateAdapter{flickrImageAdapter.retry()}
+            )
             setHasFixedSize(true)
             layoutManager = StaggeredGridLayoutManager(
                 if (resources.configuration.orientation == Configuration.ORIENTATION_PORTRAIT) 2
@@ -61,6 +65,27 @@ class HomeFragment : Fragment() {
             }
         }
 
+
+        flickrImageAdapter.addLoadStateListener { loadState ->
+            binding.apply {
+                progressBar.isVisible = loadState.source.refresh is LoadState.Loading
+                recyclerView.isVisible = loadState.source.refresh is LoadState.NotLoading
+                retryButton.isVisible = loadState.source.refresh is LoadState.Error
+                resultStatusTextView.isVisible = loadState.source.refresh is LoadState.Error
+
+                //If the recyclerView is empty, sets its visibility to false
+                if (loadState.source.refresh is LoadState.NotLoading &&
+                    loadState.append.endOfPaginationReached &&
+                    flickrImageAdapter.itemCount < 1){
+
+                    recyclerView.isVisible = false
+                    emptyTextStatus.isVisible = true
+
+                }else{
+                    emptyTextStatus.isVisible = false
+                }
+            }
+        }
     }
 
     override fun onDestroyView() {

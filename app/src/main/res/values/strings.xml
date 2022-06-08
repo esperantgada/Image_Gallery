@@ -5,4 +5,6 @@
     <string name="home">Home</string>
     <string name="could_not_load_image">Could not load image</string>
     <string name="retry">Retry</string>
+    <string name="image_can_not_loaded">Image can not loaded</string>
+    <string name="no_result_found">No result found</string>
 </resources>

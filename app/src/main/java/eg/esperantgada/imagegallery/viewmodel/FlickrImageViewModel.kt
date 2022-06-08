@@ -13,6 +13,7 @@ class FlickrImageViewModel
     flickrImageRepository: FlickrImageRepository
 ) : ViewModel(){
 
+    //Retrieves the list of photos from the repository and prepare them for the UI
     val retrievedPhotos = flickrImageRepository.getApiPhoto().cachedIn(viewModelScope)
 
 }

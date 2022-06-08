@@ -11,6 +11,7 @@ import javax.inject.Singleton
 @Singleton
 class FlickrImageRepository @Inject constructor(private val apiService: ApiService) {
 
+    //Gets a list of photo the data source and prepare it for the Viewmodel
     fun getApiPhoto() = Pager(
         config = PagingConfig(
             pageSize = 20,
