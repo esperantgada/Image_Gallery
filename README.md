@@ -1,0 +1,1 @@
+This is an assignment for internship. It's a task given by the employer to test applicants skills.
