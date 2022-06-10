@@ -5,10 +5,12 @@
       <map>
         <entry key="..\:/Users/hp/AndroidStudioProjects/ImageGallery/app/src/main/res/layout/activity_main.xml" value="0.11041666666666666" />
         <entry key="..\:/Users/hp/AndroidStudioProjects/ImageGallery/app/src/main/res/layout/fragment_home.xml" value="0.11041666666666666" />
+        <entry key="..\:/Users/hp/AndroidStudioProjects/ImageGallery/app/src/main/res/layout/fragment_search_photo.xml" value="0.11302083333333333" />
         <entry key="..\:/Users/hp/AndroidStudioProjects/ImageGallery/app/src/main/res/layout/image_list_item.xml" value="0.19791666666666666" />
         <entry key="..\:/Users/hp/AndroidStudioProjects/ImageGallery/app/src/main/res/layout/load_state_footer.xml" value="0.19791666666666666" />
         <entry key="..\:/Users/hp/AndroidStudioProjects/ImageGallery/app/src/main/res/layout/nav_drawer_header.xml" value="0.11041666666666666" />
         <entry key="..\:/Users/hp/AndroidStudioProjects/ImageGallery/app/src/main/res/menu/drawer_menu_item.xml" value="0.11041666666666666" />
+        <entry key="..\:/Users/hp/AndroidStudioProjects/ImageGallery/app/src/main/res/menu/search_image_menu.xml" value="0.11302083333333333" />
       </map>
     </option>
   </component>

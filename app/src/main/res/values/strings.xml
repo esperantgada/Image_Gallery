@@ -7,4 +7,6 @@
     <string name="retry">Retry</string>
     <string name="image_can_not_loaded">Image can not loaded</string>
     <string name="no_result_found">No result found</string>
+    <string name="search_photos">Search Photos</string>
+    <string name="search">Search</string>
 </resources>

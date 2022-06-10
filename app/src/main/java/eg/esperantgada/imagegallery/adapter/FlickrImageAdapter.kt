@@ -10,6 +10,7 @@ import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions
 import eg.esperantgada.imagegallery.R
 import eg.esperantgada.imagegallery.data.Photo
 import eg.esperantgada.imagegallery.databinding.ImageListItemBinding
+import eg.esperantgada.imagegallery.room.entities.PhotoItem
 
 class FlickrImageAdapter:   PagingDataAdapter<Photo, FlickrImageAdapter.ImagePagingViewHolder>(DiffCallback) {
 
@@ -20,7 +21,7 @@ class FlickrImageAdapter:   PagingDataAdapter<Photo, FlickrImageAdapter.ImagePag
 
 
         //Use Glide library to load photos from the API and bind views with photos details as needed
-        fun bind(photo: Photo){
+        fun bind(photo : Photo){
             binding.apply {
                 Glide.with(itemView)
                     .load(photo.getImageUrl())

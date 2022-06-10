@@ -10,4 +10,9 @@
         android:name="eg.esperantgada.imagegallery.fragment.HomeFragment"
         android:label="Photos Gallery"
         tools:layout="@layout/fragment_home" />
+    <fragment
+        android:id="@+id/searchPhotoFragment"
+        android:name="eg.esperantgada.imagegallery.fragment.SearchPhotoFragment"
+        android:label="Search photos"
+        tools:layout="@layout/fragment_search_photo" />
 </navigation>

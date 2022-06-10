@@ -1,13 +1,21 @@
 package eg.esperantgada.imagegallery.network
 
 import eg.esperantgada.imagegallery.data.ApiPhotos
-import eg.esperantgada.imagegallery.utils.API_KEY
+import eg.esperantgada.imagegallery.room.entities.PhotoItem
+import eg.esperantgada.imagegallery.room.entities.SearchItem
 import eg.esperantgada.imagegallery.utils.ENDPOINT
-import eg.esperantgada.imagegallery.utils.FORMAT
+import eg.esperantgada.imagegallery.utils.SEARCH_ENDPOINT
 import retrofit2.http.GET
+import retrofit2.http.Query
 
 interface ApiService {
 
-    @GET("?method=flickr.photos.getRecent&per_page=20&page=1&api_key=6f102c62f41998d151e5a1b48713cf13&format=json&nojsoncallback=1&extras=url_s")
+    @GET(ENDPOINT)
     suspend fun getImage() : ApiPhotos
+
+    @GET(SEARCH_ENDPOINT)
+    suspend fun SearchImage(
+        @Query("query")
+        query: String) : ApiPhotos
+
 }
