@@ -1,11 +1,13 @@
 package eg.esperantgada.imagegallery.fragment
 
+import android.content.res.Configuration
 import android.os.Bundle
 import android.view.*
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.paging.LoadState
+import androidx.recyclerview.widget.StaggeredGridLayoutManager
 import dagger.hilt.android.AndroidEntryPoint
 import eg.esperantgada.imagegallery.R
 import eg.esperantgada.imagegallery.adapter.FlickrImageAdapter
@@ -53,6 +55,12 @@ class SearchPhotoFragment : Fragment() {
                 header = FlickrImageLoadStateAdapter{adapter.retry()},
                 footer = FlickrImageLoadStateAdapter{adapter.retry()}
             )
+
+            recyclerView.layoutManager = StaggeredGridLayoutManager(
+                if (resources.configuration.orientation == Configuration.ORIENTATION_PORTRAIT) 2
+                else 3, StaggeredGridLayoutManager.VERTICAL
+            )
+
 
             //Sets clickListener on retry Button if there is error or the recyclerView is invisible
             retryButton.setOnClickListener {

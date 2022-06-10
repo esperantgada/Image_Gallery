@@ -29,7 +29,7 @@ class SearchPhotoPagingSource(
 
             LoadResult.Page(
                 data = photoList,
-                prevKey = if (position == STARTING_INDEX) null else position - 1,
+                prevKey = if (position == 2) null else position - 1,
                 nextKey = if (photoList.isEmpty()) null else position + 1
             )
         } catch (exception: IOException) {
