@@ -18,7 +18,7 @@ with [flickr.photos.search](https://www.flickr.com/services/api/flickr.photos.se
 
 These screens explain the above description:
 
-<img src="screenshots/s1.jpg" width="150" /> | <img src="screenshots/s2.jpg" width="150" /> | <img src="screenshots/s3.jpg" width="150" /> | <img src="screenshots/s4.jpg" width="150" /> | <img src="screenshots/s5.jpg" width="150"/> | <img src="screenshots/s6.jpg" width="150" />
+<img src="screenshots/s1.png" width="150" /> | <img src="screenshots/s2.png" width="150" /> | <img src="screenshots/s3.png" width="150" /> | <img src="screenshots/s4.png" width="150" /> | <img src="screenshots/s5.png" width="150"/> | <img src="screenshots/s6.png" width="150" />
 ------------|--------------|-------------|----------------|---------------|---------------
 Loading     | Home screen  | Nav drawer  | Search screen  |  Search dogs  | Search cars
 
