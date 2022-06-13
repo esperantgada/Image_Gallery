@@ -4,7 +4,10 @@ import androidx.paging.ExperimentalPagingApi
 import androidx.paging.LoadType
 import androidx.paging.PagingState
 import androidx.paging.RemoteMediator
+import androidx.room.RoomDatabase
+import androidx.room.withTransaction
 import eg.esperantgada.imagegallery.network.ApiService
+import eg.esperantgada.imagegallery.room.ImageDatabase
 import eg.esperantgada.imagegallery.room.dao.ImageDao
 import eg.esperantgada.imagegallery.room.dao.RemoteKeyDao
 import eg.esperantgada.imagegallery.room.entities.PhotoItem
@@ -15,12 +18,13 @@ import kotlinx.coroutines.withContext
 import retrofit2.HttpException
 import java.io.IOException
 
-/*
+
 @OptIn(ExperimentalPagingApi::class)
 class PhotoRemoteMediator (
     private val apiService: ApiService,
     private val imageDao: ImageDao,
-    private val remoteKeyDao: RemoteKeyDao
+    private val remoteKeyDao: RemoteKeyDao,
+    private val imageDatabase: ImageDatabase
 
 ) : RemoteMediator<Int, PhotoItem>(){
     override suspend fun load(
@@ -41,22 +45,35 @@ class PhotoRemoteMediator (
         try {
             val result = apiService.getImage()
 
-            val endOfList = result.isEmpty()
+            val endOfList = result.photos.photo.isEmpty()
 
-            if (loadType == LoadType.REFRESH){
-                remoteKeyDao.clearAllKeys()
-                imageDao.clearAllPhotos()
+            imageDatabase.withTransaction {
+                if (loadType == LoadType.REFRESH){
+                    remoteKeyDao.clearAllKeys()
+                    imageDao.clearAllPhotos()
+                }
+
+                val prevKey = if (page == STARTING_INDEX) null else page - 1
+                val nextKey = if (endOfList) null else page + 1
+
+                val keys = result.photos.photo.map { itemId ->
+                    itemId.id?.let { it -> RemoteKey(it, prevKey, nextKey) }
+                }
+
+               result.photos.photo.map {
+                   val list : List<PhotoItem> = listOf(PhotoItem(
+                        id = it.id.toString(),
+                        farm = it.farm,
+                        secret = it.secret,
+                        server = it.server,
+                        title = it.title,
+                        url_s = it.url_s
+                    ))
+                   imageDao.insertAllPhotos(list)
+                }
+                remoteKeyDao.insertRemoteKeys(keys)
+
             }
-
-            val prevKey = if (page == STARTING_INDEX) null else page - 1
-            val nextKey = if (endOfList) null else page + 1
-
-            val keys = result.map { itemId ->
-                itemId.id?.let { it -> RemoteKey(it, prevKey, nextKey) }
-            }
-            imageDao.insertAllPhotos(result)
-            remoteKeyDao.insertRemoteKeys(keys)
-
             return MediatorResult.Success(endOfList)
 
         }catch (exception : IOException){
@@ -138,4 +155,4 @@ class PhotoRemoteMediator (
                 }
         }
     }
-}*/
+}

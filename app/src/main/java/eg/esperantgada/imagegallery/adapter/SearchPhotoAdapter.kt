@@ -10,28 +10,30 @@ import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions
 import eg.esperantgada.imagegallery.R
 import eg.esperantgada.imagegallery.data.Photo
 import eg.esperantgada.imagegallery.databinding.ImageListItemBinding
-import eg.esperantgada.imagegallery.room.entities.PhotoItem
+import eg.esperantgada.imagegallery.databinding.SearchPhotoResultItemListBinding
+import eg.esperantgada.imagegallery.room.entities.SearchItem
 
-class FlickrImageAdapter:
-    PagingDataAdapter<PhotoItem, FlickrImageAdapter.ImagePagingViewHolder>(DiffCallback) {
+class SearchPhotoAdapter:
+    PagingDataAdapter<SearchItem, SearchPhotoAdapter.SearchImagePagingViewHolder>(DiffCallback) {
 
 
-    inner class ImagePagingViewHolder(
-        private val binding: ImageListItemBinding): RecyclerView.ViewHolder(binding.root){
+    inner class SearchImagePagingViewHolder(
+        private val binding: SearchPhotoResultItemListBinding
+    ): RecyclerView.ViewHolder(binding.root){
 
 
 
         //Use Glide library to load photos from the API and bind views with photos details as needed
-        fun bind(photoItem: PhotoItem){
+        fun bind(searchItem: SearchItem){
             binding.apply {
                 Glide.with(itemView)
-                    .load(photoItem.getImageUrl())
+                    .load(searchItem.getImageUrl())
                     .circleCrop()
                     .transition(DrawableTransitionOptions.withCrossFade())
                     .error(R.drawable.ic_error_icon)
                     .into(imageView)
 
-                title.text = photoItem.title
+                title.text = searchItem.title
             }
         }
 
@@ -42,14 +44,15 @@ class FlickrImageAdapter:
     override fun onCreateViewHolder(
         parent: ViewGroup,
         viewType: Int,
-    ): FlickrImageAdapter.ImagePagingViewHolder {
-        val inflatedLayout = ImageListItemBinding.inflate(LayoutInflater.from(parent.context), parent, false)
+    ): SearchPhotoAdapter.SearchImagePagingViewHolder {
+        val inflatedLayout = SearchPhotoResultItemListBinding
+            .inflate(LayoutInflater.from(parent.context), parent, false)
 
-        return ImagePagingViewHolder(inflatedLayout)
+        return SearchImagePagingViewHolder(inflatedLayout)
     }
 
 
-    override fun onBindViewHolder(holder: FlickrImageAdapter.ImagePagingViewHolder, position: Int) {
+    override fun onBindViewHolder(holder: SearchPhotoAdapter.SearchImagePagingViewHolder, position: Int) {
         val currentPhoto = getItem(position)
 
         if (currentPhoto != null){
@@ -58,15 +61,17 @@ class FlickrImageAdapter:
     }
 
 
-    companion object DiffCallback : DiffUtil.ItemCallback<PhotoItem>(){
+    companion object DiffCallback : DiffUtil.ItemCallback<SearchItem>(){
         override fun areItemsTheSame(
-            oldItem: PhotoItem,
-            newItem: PhotoItem): Boolean = oldItem.id == newItem.id
+            oldItem: SearchItem,
+            newItem: SearchItem
+        ): Boolean = oldItem.id == newItem.id
 
 
         override fun areContentsTheSame(
-            oldItem: PhotoItem,
-            newItem: PhotoItem): Boolean = oldItem == newItem
+            oldItem: SearchItem,
+            newItem: SearchItem
+        ): Boolean = oldItem == newItem
 
     }
 }

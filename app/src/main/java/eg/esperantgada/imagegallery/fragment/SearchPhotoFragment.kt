@@ -7,12 +7,15 @@ import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.paging.LoadState
+import androidx.paging.PagingData
 import androidx.recyclerview.widget.StaggeredGridLayoutManager
 import dagger.hilt.android.AndroidEntryPoint
 import eg.esperantgada.imagegallery.R
 import eg.esperantgada.imagegallery.adapter.FlickrImageAdapter
 import eg.esperantgada.imagegallery.adapter.FlickrImageLoadStateAdapter
+import eg.esperantgada.imagegallery.adapter.SearchPhotoAdapter
 import eg.esperantgada.imagegallery.databinding.FragmentSearchPhotoBinding
+import eg.esperantgada.imagegallery.room.entities.SearchItem
 import eg.esperantgada.imagegallery.viewmodel.SearchImageViewModel
 
 @AndroidEntryPoint
@@ -26,7 +29,7 @@ class SearchPhotoFragment : Fragment() {
     /**
      * We pass the fragment itself in the adapter after setting OnClickListener on it
      */
-    private val adapter = FlickrImageAdapter()
+    private val searchPhotoAdapter = SearchPhotoAdapter()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -51,9 +54,9 @@ class SearchPhotoFragment : Fragment() {
          */
         binding.apply {
             recyclerView.setHasFixedSize(true)
-            recyclerView.adapter = adapter.withLoadStateHeaderAndFooter(
-                header = FlickrImageLoadStateAdapter{adapter.retry()},
-                footer = FlickrImageLoadStateAdapter{adapter.retry()}
+            recyclerView.adapter = searchPhotoAdapter.withLoadStateHeaderAndFooter(
+                header = FlickrImageLoadStateAdapter{searchPhotoAdapter.retry()},
+                footer = FlickrImageLoadStateAdapter{searchPhotoAdapter.retry()}
             )
 
             recyclerView.layoutManager = StaggeredGridLayoutManager(
@@ -64,19 +67,19 @@ class SearchPhotoFragment : Fragment() {
 
             //Sets clickListener on retry Button if there is error or the recyclerView is invisible
             retryButton.setOnClickListener {
-                adapter.retry()
+                searchPhotoAdapter.retry()
             }
         }
 
         //Observes photoList in the ViewModel class and updates UI accordingly
-        viewModel.photosList.observe(viewLifecycleOwner){
-            adapter.submitData(viewLifecycleOwner.lifecycle, it)
+       viewModel.photosList.observe(viewLifecycleOwner){ photo ->
+            searchPhotoAdapter.submitData(viewLifecycleOwner.lifecycle, photo as PagingData<SearchItem>)
         }
 
         /**
          * Handles [recyclerView] [retryButton]... visibility depending on the loading state
          */
-        adapter.addLoadStateListener { loadState ->
+        searchPhotoAdapter.addLoadStateListener { loadState ->
             binding.apply {
                 progressBar.isVisible = loadState.source.refresh is LoadState.Loading
                 recyclerView.isVisible = loadState.source.refresh is LoadState.NotLoading
@@ -86,7 +89,7 @@ class SearchPhotoFragment : Fragment() {
                 //If the recyclerView is empty, sets its visibility to false
                 if (loadState.source.refresh is LoadState.NotLoading &&
                     loadState.append.endOfPaginationReached &&
-                    adapter.itemCount < 1){
+                    searchPhotoAdapter.itemCount < 1){
 
                     recyclerView.isVisible = false
                     emptyTextStatus.isVisible = true

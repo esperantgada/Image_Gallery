@@ -23,9 +23,9 @@ class SearchPhotoPagingSource(
         //Gets the list of photos from the API and prepare this for the repository
 
         return try {
-            val response = apiService.SearchImage(searchQuery)
+            val response = apiService.searchImage(searchQuery)
 
-            val photoList = response.photos!!.photo
+            val photoList =  response.photos.photo
 
             LoadResult.Page(
                 data = photoList,

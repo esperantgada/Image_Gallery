@@ -1,12 +1,17 @@
 package eg.esperantgada.imagegallery.paging
 
+import android.annotation.SuppressLint
+import android.util.Log
 import androidx.paging.ExperimentalPagingApi
 import androidx.paging.LoadType
 import androidx.paging.PagingState
 import androidx.paging.RemoteMediator
+import androidx.room.withTransaction
 import eg.esperantgada.imagegallery.network.ApiService
+import eg.esperantgada.imagegallery.room.ImageDatabase
 import eg.esperantgada.imagegallery.room.dao.RemoteKeyDao
 import eg.esperantgada.imagegallery.room.dao.SearchImageDao
+import eg.esperantgada.imagegallery.room.entities.PhotoItem
 import eg.esperantgada.imagegallery.room.entities.RemoteKey
 import eg.esperantgada.imagegallery.room.entities.SearchItem
 import eg.esperantgada.imagegallery.utils.STARTING_INDEX
@@ -15,15 +20,18 @@ import kotlinx.coroutines.withContext
 import retrofit2.HttpException
 import java.io.IOException
 
-/*
+const val TAG = "SearchPhotoRemoteMediator"
+
 @OptIn(ExperimentalPagingApi::class)
 class SearchPhotoRemoteMediator (
     private val apiService: ApiService,
     private val searchImageDao: SearchImageDao,
     private val remoteKeyDao: RemoteKeyDao,
-    private val searchQuery : String
+    private val searchQuery : String,
+    private val imageDatabase: ImageDatabase
 
     ) : RemoteMediator<Int, SearchItem>(){
+    @SuppressLint("LongLogTag")
     override suspend fun load(
         loadType: LoadType,
         state: PagingState<Int, SearchItem>,
@@ -40,24 +48,37 @@ class SearchPhotoRemoteMediator (
         }
 
         try {
-            val result = apiService.SearchImage(searchQuery)
+            val result = apiService.searchImage(searchQuery)
 
-            val endOfList = result.isEmpty()
+            val endOfList = result.photos.photo.isEmpty()
 
-            if (loadType == LoadType.REFRESH){
-                remoteKeyDao.clearAllKeys()
-                searchImageDao.clearAllPhotos()
+            imageDatabase.withTransaction {
+                if (loadType == LoadType.REFRESH){
+                    remoteKeyDao.clearAllKeys()
+                    searchImageDao.clearAllPhotos()
+                }
+
+                val prevKey = if (page == STARTING_INDEX) null else page - 1
+                val nextKey = if (endOfList) null else page + 1
+
+                val keys = result.photos.photo.map { itemId ->
+                    itemId.id?.let { it -> RemoteKey(it, prevKey, nextKey) }
+                }
+
+                result.photos.photo.map {
+                    val photoList : List<SearchItem> = listOf(SearchItem(
+                        id = it.id.toString(),
+                        farm = it.farm,
+                        secret = it.secret,
+                        server = it.server,
+                        title = it.title,
+                        url_s = it.url_s
+                    ))
+                    searchImageDao.insertAllPhotos(photoList)
+                    Log.d(TAG, "PHOTOS LIST IN SEARCHPHOTOREMOTEMEDIATOR : $photoList")
+                }
+                remoteKeyDao.insertRemoteKeys(keys)
             }
-
-            val prevKey = if (page == STARTING_INDEX) null else page - 1
-            val nextKey = if (endOfList) null else page + 1
-
-            val keys = result.map { itemId ->
-                itemId.id?.let { it -> RemoteKey(it, prevKey, nextKey) }
-            }
-            searchImageDao.insertAllPhotos(result)
-            remoteKeyDao.insertRemoteKeys(keys)
-
             return MediatorResult.Success(endOfList)
 
         }catch (exception : IOException){
@@ -66,6 +87,7 @@ class SearchPhotoRemoteMediator (
             return MediatorResult.Error(exception)
         }
     }
+
 
 
     private suspend fun getPageDataKey(
@@ -139,4 +161,4 @@ class SearchPhotoRemoteMediator (
                 }
         }
     }
-}*/
+}

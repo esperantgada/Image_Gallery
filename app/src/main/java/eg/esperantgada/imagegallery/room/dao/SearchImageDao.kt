@@ -13,8 +13,8 @@ interface SearchImageDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     fun insertAllPhotos(photoList : List<SearchItem>)
 
-    @Query("SELECT * FROM search_table WHERE title =:searchQuery")
-    fun getAllPhotos(searchQuery : String) : PagingSource<Int, SearchItem>
+    @Query("SELECT * FROM search_table")
+    fun getAllPhotos() : PagingSource<Int, SearchItem>
 
     @Query("DELETE FROM search_table")
     fun clearAllPhotos()

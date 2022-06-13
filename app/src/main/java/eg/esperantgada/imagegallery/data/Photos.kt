@@ -5,6 +5,6 @@ import com.google.gson.annotations.SerializedName
 data class Photos(
 
     @SerializedName("photo")
-    val photo: List<Photo> = listOf(),
+    val photo: List<Photo>
 
 )

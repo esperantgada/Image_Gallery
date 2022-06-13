@@ -25,7 +25,7 @@ class PhotoPagingSource (
         return try {
             val response = apiService.getImage()
 
-            val photoList = response.photos!!.photo
+            val photoList = response.photos.photo
 
             LoadResult.Page(
                 data = photoList,

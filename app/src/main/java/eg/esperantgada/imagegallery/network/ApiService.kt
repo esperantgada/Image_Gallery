@@ -1,6 +1,7 @@
 package eg.esperantgada.imagegallery.network
 
 import eg.esperantgada.imagegallery.data.ApiPhotos
+import eg.esperantgada.imagegallery.data.Photo
 import eg.esperantgada.imagegallery.room.entities.PhotoItem
 import eg.esperantgada.imagegallery.room.entities.SearchItem
 import eg.esperantgada.imagegallery.utils.ENDPOINT
@@ -14,8 +15,8 @@ interface ApiService {
     suspend fun getImage() : ApiPhotos
 
     @GET(SEARCH_ENDPOINT)
-    suspend fun SearchImage(
-        @Query("query")
-        query: String) : ApiPhotos
+    suspend fun searchImage(
+        @Query("text")
+        searchQuery: String) : ApiPhotos
 
 }

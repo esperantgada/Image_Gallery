@@ -8,7 +8,7 @@ const val SEARCH_ENDPOINT = "?method=flickr.photos.search&api_key=6f102c62f41998
         "713cf13&format=json&nojsoncallback=1&extras=url_s&text=cat"
 
 
-const val STARTING_INDEX = 12
+const val STARTING_INDEX = 1
 
 const val CURRENT_QUERY = "query"
 
