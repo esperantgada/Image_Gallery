@@ -5,9 +5,7 @@ This is an assignment for internship. It's a task given by the employer to test 
 
 An app that fetches images from [Flickr](https://www.flickr.com/services/developer/api/) API and 
 displays them on the screen. The user can directly get  a list of images from the API and displays see them on the screen or 
-search images by name from the API. In all cases, the image are fetched from the API and saved in 
-Room database before being retrieved and displayed by the UI.
-
+search images by name from the API. 
 
 How does it work?
 ================
@@ -15,6 +13,8 @@ By default, it has a list of cats on the screen. This is achieved with [flickr.p
 The user can use the search screen from the navigation drawer bar to enter a query depending on what
 he wants to search. After entering his query, he will get a list of photos or images. This is done 
 with [flickr.photos.search](https://www.flickr.com/services/api/flickr.photos.search.html)
+In all cases, the image are fetched from the API and saved in Room database before being retrieved and displayed by the UI.
+
 
 These screens show the above description:
 
