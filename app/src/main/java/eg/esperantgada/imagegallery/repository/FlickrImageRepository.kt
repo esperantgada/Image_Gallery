@@ -5,7 +5,6 @@ import androidx.paging.Pager
 import androidx.paging.PagingConfig
 import androidx.paging.liveData
 import eg.esperantgada.imagegallery.network.ApiService
-import eg.esperantgada.imagegallery.paging.PhotoPagingSource
 import eg.esperantgada.imagegallery.paging.PhotoRemoteMediator
 import eg.esperantgada.imagegallery.room.ImageDatabase
 import eg.esperantgada.imagegallery.room.dao.ImageDao
@@ -26,7 +25,8 @@ class FlickrImageRepository
     @OptIn(ExperimentalPagingApi::class)
     fun getApiPhoto() = Pager(
         config = PagingConfig(
-            pageSize = 100,
+            initialLoadSize = 10,
+            pageSize = 10,
             maxSize = 300,
             enablePlaceholders = false
         ),

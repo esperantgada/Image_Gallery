@@ -61,12 +61,14 @@ class FlickrImageAdapter:
     companion object DiffCallback : DiffUtil.ItemCallback<PhotoItem>(){
         override fun areItemsTheSame(
             oldItem: PhotoItem,
-            newItem: PhotoItem): Boolean = oldItem.id == newItem.id
+            newItem: PhotoItem
+        ): Boolean = oldItem.id == newItem.id
 
 
         override fun areContentsTheSame(
             oldItem: PhotoItem,
-            newItem: PhotoItem): Boolean = oldItem == newItem
+            newItem: PhotoItem
+        ): Boolean = oldItem == newItem
 
     }
 }

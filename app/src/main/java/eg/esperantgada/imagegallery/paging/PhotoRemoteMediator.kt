@@ -43,9 +43,14 @@ class PhotoRemoteMediator (
         }
 
         try {
-            val result = apiService.getImage()
+            val secondPageResult = apiService.getImage().photos.photo
+            val thirdPageResult = apiService.getImageFromPage3().photos.photo
 
-            val endOfList = result.photos.photo.isEmpty()
+            val result = secondPageResult.plus(thirdPageResult)
+
+
+
+            val endOfList = result.isEmpty()
 
             imageDatabase.withTransaction {
                 if (loadType == LoadType.REFRESH){
@@ -56,11 +61,11 @@ class PhotoRemoteMediator (
                 val prevKey = if (page == STARTING_INDEX) null else page - 1
                 val nextKey = if (endOfList) null else page + 1
 
-                val keys = result.photos.photo.map { itemId ->
+                val keys = result.map { itemId ->
                     itemId.id?.let { it -> RemoteKey(it, prevKey, nextKey) }
                 }
 
-               result.photos.photo.map {
+               result.map {
                    val list : List<PhotoItem> = listOf(PhotoItem(
                         id = it.id.toString(),
                         farm = it.farm,

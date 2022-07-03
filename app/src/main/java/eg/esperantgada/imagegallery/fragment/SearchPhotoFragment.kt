@@ -3,21 +3,30 @@ package eg.esperantgada.imagegallery.fragment
 import android.content.res.Configuration
 import android.os.Bundle
 import android.view.*
+import androidx.appcompat.widget.SearchView
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.lifecycleScope
 import androidx.paging.LoadState
-import androidx.paging.PagingData
 import androidx.recyclerview.widget.StaggeredGridLayoutManager
+import com.google.android.material.snackbar.BaseTransientBottomBar
+import com.google.android.material.snackbar.Snackbar
 import dagger.hilt.android.AndroidEntryPoint
 import eg.esperantgada.imagegallery.R
-import eg.esperantgada.imagegallery.adapter.FlickrImageAdapter
 import eg.esperantgada.imagegallery.adapter.FlickrImageLoadStateAdapter
 import eg.esperantgada.imagegallery.adapter.SearchPhotoAdapter
+import eg.esperantgada.imagegallery.application.ImageGalleryApplication
 import eg.esperantgada.imagegallery.databinding.FragmentSearchPhotoBinding
-import eg.esperantgada.imagegallery.room.entities.SearchItem
+import eg.esperantgada.imagegallery.utils.getQueryTextChangedStateFlow
+import eg.esperantgada.imagegallery.utils.isInternetAvailable
 import eg.esperantgada.imagegallery.viewmodel.SearchImageViewModel
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.flow.*
+import kotlinx.coroutines.launch
+import java.time.LocalDate
 
+@Suppress("DEPRECATION")
 @AndroidEntryPoint
 class SearchPhotoFragment : Fragment() {
 
@@ -71,10 +80,9 @@ class SearchPhotoFragment : Fragment() {
             }
         }
 
-        //Observes photoList in the ViewModel class and updates UI accordingly
-       viewModel.photosList.observe(viewLifecycleOwner){ photo ->
-            searchPhotoAdapter.submitData(viewLifecycleOwner.lifecycle, photo as PagingData<SearchItem>)
-        }
+        if (!isInternetAvailable(requireContext()))
+            showSnackBar()
+
 
         /**
          * Handles [recyclerView] [retryButton]... visibility depending on the loading state
@@ -85,6 +93,7 @@ class SearchPhotoFragment : Fragment() {
                 recyclerView.isVisible = loadState.source.refresh is LoadState.NotLoading
                 retryButton.isVisible = loadState.source.refresh is LoadState.Error
                 resultStatusTextView.isVisible = loadState.source.refresh is LoadState.Error
+
 
                 //If the recyclerView is empty, sets its visibility to false
                 if (loadState.source.refresh is LoadState.NotLoading &&
@@ -103,6 +112,7 @@ class SearchPhotoFragment : Fragment() {
 
 
 
+    @OptIn(ExperimentalCoroutinesApi::class, kotlinx.coroutines.FlowPreview::class)
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
         super.onCreateOptionsMenu(menu, inflater)
 
@@ -113,31 +123,37 @@ class SearchPhotoFragment : Fragment() {
         val search = menu.findItem(R.id.search_image)
 
         //Casts view as SearchView
-        val searchView = search.actionView as androidx.appcompat.widget.SearchView
+        val searchView = search.actionView as SearchView
 
-        searchView.setOnQueryTextListener(object : androidx.appcompat.widget.SearchView.OnQueryTextListener{
-
-            //Takes a query from the user and submits it to the adapter by calling setQuery method from the ViewModel
-            override fun onQueryTextSubmit(query: String?): Boolean {
-                if (query != null){
-                    binding.recyclerView.scrollToPosition(0)
-                    viewModel.setQuery(query)
-
-                    //Removes keyboard after submitting a query
-                    searchView.clearFocus()
+        lifecycleScope.launch {
+            searchView.getQueryTextChangedStateFlow()
+                .debounce(800)
+                .filter { searchQuery ->
+                    if (searchQuery.isEmpty()){
+                        viewModel.getPhotosListBySearch("cat")
+                        return@filter false
+                    }else{
+                        return@filter  true
+                    }
                 }
+                .distinctUntilChanged()
+                .flatMapLatest {
+                    query -> viewModel.getPhotosListBySearch(query)
+                }.collectLatest {
+                    photoList ->
+                    searchPhotoAdapter.submitData(photoList)
+                }
+        }
 
-                return true
-            }
-
-            override fun onQueryTextChange(p0: String?): Boolean {
-                return true
-            }
-
-        })
     }
 
-
+    private fun showSnackBar(){
+       Snackbar.make(requireView(), "Network failure", Snackbar.LENGTH_INDEFINITE)
+            .setAnimationMode(BaseTransientBottomBar.ANIMATION_MODE_SLIDE)
+            .setAction("Retry"){
+                searchPhotoAdapter.retry()
+            }.show()
+    }
 
 
     override fun onDestroyView() {

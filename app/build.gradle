@@ -40,7 +40,7 @@ android {
 
 dependencies {
 
-    implementation 'androidx.core:core-ktx:1.7.0'
+    implementation 'androidx.core:core-ktx:1.8.0'
     implementation 'androidx.appcompat:appcompat:1.4.2'
     implementation 'com.google.android.material:material:1.6.1'
     implementation 'androidx.constraintlayout:constraintlayout:2.1.4'
@@ -68,8 +68,8 @@ dependencies {
     implementation 'androidx.lifecycle:lifecycle-common-java8:2.4.1'
 
     // Navigation Component
-    implementation "androidx.navigation:navigation-fragment-ktx:2.5.0-rc01"
-    implementation "androidx.navigation:navigation-ui-ktx:2.5.0-rc01"
+    implementation "androidx.navigation:navigation-fragment-ktx:2.5.0-rc02"
+    implementation "androidx.navigation:navigation-ui-ktx:2.5.0-rc02"
 
     // Room
     implementation "androidx.room:room-runtime:2.4.2"
@@ -77,8 +77,8 @@ dependencies {
     implementation "androidx.room:room-ktx:2.4.2"
 
     // Coroutines
-    implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-core:1.6.0'
-    implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-android:1.6.0'
+    implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-core:1.6.1'
+    implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-android:1.6.1'
 
 
     // Dagger Hilt

@@ -1,15 +1,14 @@
 package eg.esperantgada.imagegallery.repository
 
-import androidx.paging.*
+import androidx.paging.ExperimentalPagingApi
+import androidx.paging.Pager
+import androidx.paging.PagingConfig
+import androidx.paging.liveData
 import eg.esperantgada.imagegallery.network.ApiService
-import eg.esperantgada.imagegallery.paging.PhotoPagingSource
-import eg.esperantgada.imagegallery.paging.SearchPhotoPagingSource
 import eg.esperantgada.imagegallery.paging.SearchPhotoRemoteMediator
 import eg.esperantgada.imagegallery.room.ImageDatabase
 import eg.esperantgada.imagegallery.room.dao.RemoteKeyDao
 import eg.esperantgada.imagegallery.room.dao.SearchImageDao
-import eg.esperantgada.imagegallery.room.entities.SearchItem
-import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -26,7 +25,8 @@ class SearchImageRepository
     @OptIn(ExperimentalPagingApi::class)
     fun getPhoto(searchQuery : String)  = Pager(
         config = PagingConfig(
-            pageSize = 100,
+            initialLoadSize = 20,
+            pageSize = 20,
             maxSize = 300,
             enablePlaceholders = false
         ),
